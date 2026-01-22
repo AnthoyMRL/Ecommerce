@@ -2,7 +2,7 @@ name: "CodeQL Advanced Security"
 
 on:
   push:
-    branches: [ "feature/codeql-testing" ]  
+    branches: [ "main" ]  
   workflow_dispatch:
 
 jobs:
