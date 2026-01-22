@@ -40,21 +40,18 @@ jobs:
       
       - name: Build Java
         run: |
-          # Para Maven
+          cd backend
           mvn clean install -DskipTests
-          # Para Gradle, usa en su lugar:
-          # ./gradlew build -x test
       
       - name: Instalar dependencias JavaScript
         run: |
-          npm ci
-          # Si tu package.json está en un subdirectorio:
-          # cd tu-directorio && npm ci
+          cd frontend
+          npm install
       
       - name: Build JavaScript
         run: |
+          cd frontend
           npm run build --if-present
-          # Ajusta según tu proyecto
       
       - name: Análisis de CodeQL
         uses: github/codeql-action/analyze@v4
