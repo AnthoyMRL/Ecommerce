@@ -2,7 +2,7 @@ name: "CodeQL Advanced Security"
 
 on:
   push:
-    branches: [ "main" ]  
+    branches: [ "feature/codeql-testing" ]  
   workflow_dispatch:
 
 jobs:
@@ -30,7 +30,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # Cambia a 'yarn' o 'pnpm' si usas esos
+          # cache: 'npm'  # Deshabilitado porque no hay package-lock.json
       
       - name: Inicializar CodeQL
         uses: github/codeql-action/init@v4
