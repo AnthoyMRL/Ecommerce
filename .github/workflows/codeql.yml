@@ -1,59 +1,57 @@
-name: "CodeQL Advanced Security"
+name: CodeQL Advanced Security
 
 on:
   push:
-    branches: [ "main" ]  
+    branches: [ "main" ]
   workflow_dispatch:
 
 jobs:
   security-scan:
-    name: Escaneo
+    name: Escaneo CodeQL
     runs-on: ubuntu-latest
-    
+
     permissions:
       actions: read
       contents: read
       security-events: write
-    
+
     steps:
       - name: Checkout código
         uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0
+
       - name: Instalar Java
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
-          cache: 'maven'  # Cambia a 'gradle' si usas Gradle
-      
+          cache: 'maven'
+
       - name: Instalar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # cache: 'npm'  # Deshabilitado porque no hay package-lock.json
-      
+
       - name: Inicializar CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: java, javascript
-          # Para TypeScript, usa: languages: java, javascript-typescript
-      
-      - name: Build Java
+
+      - name: Build Java (Backend)
         run: |
-          cd Ecommerce/backend/business-domain
+          cd backend
           mvn clean install -DskipTests
-      
-      - name: Instalar dependencias JavaScript
+
+      - name: Instalar dependencias JavaScript (Frontend)
         run: |
           cd frontend
           npm install
-      
-      - name: Build JavaScript
+
+      - name: Build JavaScript (Frontend)
         run: |
           cd frontend
           npm run build --if-present
-      
+
       - name: Análisis de CodeQL
         uses: github/codeql-action/analyze@v4
-        with:
-          category: "/language:${{matrix.language}}"
