@@ -1,0 +1,62 @@
+name: "CodeQL Advanced Security"
+
+on:
+  push:
+    branches: [ "feature/codeql-testing" ]  
+  workflow_dispatch:
+
+jobs:
+  security-scan:
+    name: Escaneo
+    runs-on: ubuntu-latest
+    
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+      
+      - name: Instalar Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'maven'  # Cambia a 'gradle' si usas Gradle
+      
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'  # Cambia a 'yarn' o 'pnpm' si usas esos
+      
+      - name: Inicializar CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: java, javascript
+          # Para TypeScript, usa: languages: java, javascript-typescript
+      
+      - name: Build Java
+        run: |
+          # Para Maven
+          mvn clean install -DskipTests
+          # Para Gradle, usa en su lugar:
+          # ./gradlew build -x test
+      
+      - name: Instalar dependencias JavaScript
+        run: |
+          npm ci
+          # Si tu package.json está en un subdirectorio:
+          # cd tu-directorio && npm ci
+      
+      - name: Build JavaScript
+        run: |
+          npm run build --if-present
+          # Ajusta según tu proyecto
+      
+      - name: Análisis de CodeQL
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"
