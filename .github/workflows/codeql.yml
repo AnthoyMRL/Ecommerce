@@ -38,10 +38,13 @@ jobs:
         with:
           languages: java, javascript
 
-      - name: Build Java (Backend)
+      - name: Build Java - Business Domain
         run: |
-          cd backend
-          mvn clean install -DskipTests
+          mvn clean install -DskipTests -f backend/business-domain/pom.xml
+
+      - name: Build Java - Infrastructure Domain
+        run: |
+          mvn clean install -DskipTests -f backend/infraestructure-domain/pom.xml
 
       - name: Instalar dependencias JavaScript (Frontend)
         run: |
